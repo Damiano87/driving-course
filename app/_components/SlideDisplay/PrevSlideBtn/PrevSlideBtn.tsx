@@ -1,21 +1,35 @@
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { saveProgress } from "../actions";
 
-const PrevSlideBtn = ({
-  index,
-  setIndex,
-}: {
-  index: number;
-  setIndex: Dispatch<SetStateAction<number>>;
-}) => {
+const PrevSlideBtn = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const currentSlide = parseInt(searchParams.get("slide") || "1", 10);
+
   // Go to the previous slide
   const prevSlide = () => {
-    if (index === 0) return;
+    if (currentSlide === 1) return;
 
-    setIndex((prev) => prev - 1);
+    const nextSlideNumber = currentSlide - 1;
+
+    // create new object with url search params
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("slide", nextSlideNumber.toString());
+
+    // update URL
+    router.push(`?${params.toString()}`);
+
+    // save progress
+    saveProgress(
+      "cmhnzo86b0000fxkgagycs8l5",
+      "cmhukpd1z0000fx5g703nasch",
+      currentSlide
+    );
   };
 
-  if (index === 0) return null;
+  if (currentSlide === 1) return null;
 
   return (
     <Button aria-label="Previous slide" onClick={prevSlide}>

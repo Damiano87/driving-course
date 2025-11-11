@@ -3,17 +3,28 @@
 import Image from "next/image";
 import PrevSlideBtn from "./PrevSlideBtn/PrevSlideBtn";
 import NextSlideBtn from "./NextSlideBtn/NextSlideBtn";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Slide } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import TimeoutBar from "./TimeoutBar/TimeoutBar";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const SlideDisplay = ({ slides }: { slides: Promise<string | Slide[]> }) => {
   const allSlides = use(slides) as Slide[];
-  const [index, setIndex] = useState<number>(0);
+  //   const [index, setIndex] = useState<number>(0);
   const [width, setWidth] = useState<number>(100);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  console.log(allSlides);
+  // set index for toggling slides
+  const index = parseInt(searchParams.get("slide") || "1") - 1;
+
+  // If url doesnt have value set it
+  useEffect(() => {
+    if (!searchParams.get("slide")) {
+      router.push("?slide=1");
+    }
+  }, [searchParams, router]);
 
   return (
     <div className="space-y-8">
@@ -43,13 +54,8 @@ const SlideDisplay = ({ slides }: { slides: Promise<string | Slide[]> }) => {
             index === 0 ? "justify-end" : "justify-between"
           )}
         >
-          <PrevSlideBtn index={index} setIndex={setIndex} />
-          <NextSlideBtn
-            index={index}
-            setIndex={setIndex}
-            setWidth={setWidth}
-            slides={allSlides}
-          />
+          <PrevSlideBtn />
+          <NextSlideBtn setWidth={setWidth} slides={allSlides} />
         </div>
       ) : (
         <TimeoutBar width={width} setWidth={setWidth} />
