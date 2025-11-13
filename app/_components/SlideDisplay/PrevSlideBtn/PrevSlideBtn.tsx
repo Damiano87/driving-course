@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { saveProgress } from "../actions";
+import { Slide } from "@prisma/client";
+import { setUrlParams } from "@/lib/utils";
 
-const PrevSlideBtn = () => {
+const PrevSlideBtn = ({ slides }: { slides: Slide[] }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -12,20 +14,17 @@ const PrevSlideBtn = () => {
   const prevSlide = () => {
     if (currentSlide === 1) return;
 
-    const nextSlideNumber = currentSlide - 1;
+    const prevSlideNumber = currentSlide - 1;
 
     // create new object with url search params
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("slide", nextSlideNumber.toString());
-
-    // update URL
-    router.push(`?${params.toString()}`);
+    setUrlParams(prevSlideNumber, searchParams, router);
 
     // save progress
     saveProgress(
       "cmhnzo86b0000fxkgagycs8l5",
       "cmhukpd1z0000fx5g703nasch",
-      currentSlide
+      slides[prevSlideNumber - 1].id,
+      prevSlideNumber
     );
   };
 

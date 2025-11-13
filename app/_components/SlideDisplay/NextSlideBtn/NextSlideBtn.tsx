@@ -3,6 +3,7 @@ import { Slide } from "@prisma/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { saveProgress } from "../actions";
+import { setUrlParams } from "@/lib/utils";
 
 type NextSlideBtnProps = {
   slides: Slide[];
@@ -22,19 +23,16 @@ const NextSlideBtn = ({ setWidth, slides }: NextSlideBtnProps) => {
     const nextSlideNumber = currentSlide + 1;
 
     // create new object with url search params
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("slide", nextSlideNumber.toString());
+    setUrlParams(nextSlideNumber, searchParams, router);
 
-    // update URL
-    router.push(`?${params.toString()}`);
-
-    setWidth(100);
+    setWidth(0);
 
     // save progress
     saveProgress(
       "cmhnzo86b0000fxkgagycs8l5",
       "cmhukpd1z0000fx5g703nasch",
-      currentSlide
+      slides[currentSlide].id,
+      nextSlideNumber
     );
   };
 

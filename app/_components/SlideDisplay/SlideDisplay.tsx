@@ -11,7 +11,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const SlideDisplay = ({ slides }: { slides: Promise<string | Slide[]> }) => {
   const allSlides = use(slides) as Slide[];
-  //   const [index, setIndex] = useState<number>(0);
   const [width, setWidth] = useState<number>(100);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,6 +27,7 @@ const SlideDisplay = ({ slides }: { slides: Promise<string | Slide[]> }) => {
 
   return (
     <div className="space-y-8">
+      <h1 className="text-center text-foreground">{allSlides[index].title}</h1>
       {/* Slide image */}
       <div>
         <Image
@@ -54,7 +54,7 @@ const SlideDisplay = ({ slides }: { slides: Promise<string | Slide[]> }) => {
             index === 0 ? "justify-end" : "justify-between"
           )}
         >
-          <PrevSlideBtn />
+          <PrevSlideBtn slides={allSlides} />
           <NextSlideBtn setWidth={setWidth} slides={allSlides} />
         </div>
       ) : (
