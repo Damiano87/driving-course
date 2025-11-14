@@ -83,7 +83,6 @@ export const getProgress = async (userId: string, courseId: string) => {
       },
     });
 
-    console.log(progress?.completedSlides);
     return progress?.completedSlides || [];
   } catch (error) {
     if (error instanceof Error) {

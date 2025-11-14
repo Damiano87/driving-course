@@ -26,7 +26,7 @@ export default async function Home({
       numbersOfSlides.length > 0 ? Math.max(...numbersOfSlides) : 1; // or 1 if progress doesn't exist
 
     // redirect to same url + slide parameter
-    redirect(`/?slide=${lastSlide}`);
+    redirect(`/?slide=${lastSlide.toString()}`);
   }
 
   return (
