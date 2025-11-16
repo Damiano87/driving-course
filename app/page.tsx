@@ -2,6 +2,7 @@ import { getCourses } from "@/actions";
 import SlideDisplay from "./_components/SlideDisplay/SlideDisplay";
 import { getProgress, getSlides } from "./_components/SlideDisplay/actions";
 import { redirect } from "next/navigation";
+import SlideSidebar from "./_components/SlideSidebar/SlideSidebar";
 
 export default async function Home({
   searchParams,
@@ -30,8 +31,11 @@ export default async function Home({
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <SlideDisplay slides={slides} />
+    <div className="min-h-screen flex items">
+      <div className="flex flex-1 justify-center items-center">
+        <SlideDisplay slides={slides} />
+      </div>
+      <SlideSidebar />
     </div>
   );
 }

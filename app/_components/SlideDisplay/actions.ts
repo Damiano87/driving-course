@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma/prisma";
+import { revalidatePath } from "next/cache";
 
 // Get all slides for specific course ==============================
 export const getSlides = async (courseId: string) => {
@@ -62,6 +63,8 @@ export const saveProgress = async (
         lastAccessedAt: new Date(),
       },
     });
+
+    revalidatePath("/");
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);
