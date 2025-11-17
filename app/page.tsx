@@ -3,12 +3,22 @@ import SlideDisplay from "./_components/SlideDisplay/SlideDisplay";
 import { getProgress, getSlides } from "./_components/SlideDisplay/actions";
 import { redirect } from "next/navigation";
 import SlideSidebar from "./_components/SlideSidebar/SlideSidebar";
+import { auth } from "@/auth";
+import Navbar from "./_components/Navbar/Navbar";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ slide?: string }>;
 }) {
+  // check if user is logged in
+  const session = await auth();
+
+  if (!session) {
+    // redirect to login page
+    redirect("/login");
+  }
+
   const params = await searchParams;
   const slides = getSlides("cmhnzo86b0000fxkgagycs8l5");
 
@@ -31,11 +41,14 @@ export default async function Home({
   }
 
   return (
-    <div className="min-h-screen flex items">
-      <div className="flex flex-1 justify-center items-center">
-        <SlideDisplay slides={slides} />
+    <div>
+      <Navbar />
+      <div className="min-h-screen flex">
+        <div className="flex flex-1 justify-center items-center">
+          <SlideDisplay slides={slides} />
+        </div>
+        <SlideSidebar />
       </div>
-      <SlideSidebar />
     </div>
   );
 }
