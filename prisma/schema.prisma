@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Course {
   id          String   @id @default(cuid())
   title       String
@@ -26,7 +25,7 @@ model Course {
 model Slide {
   id       String  @id @default(cuid())
   courseId String
-  order    Int     // order of slides (1, 2, 3...)
+  order    Int // order of slides (1, 2, 3...)
   title    String
   content  String  @db.Text // long text
   imageUrl String? // image url
@@ -46,11 +45,12 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  password  String   // hashed password
+  password  String // hashed password
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   progress UserProgress[]
+  exams    Exam[]
 
   @@map("users")
 }
@@ -60,7 +60,7 @@ model UserProgress {
   userId          String
   courseId        String
   currentSlideId  String? // ID of currently watched slide
-  completedSlides Int[]   @default([]) // array of numbers of finished slides
+  completedSlides Int[]    @default([]) // array of numbers of finished slides
   lastAccessedAt  DateTime @default(now())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -71,4 +71,70 @@ model UserProgress {
   // User can have only one progress for a course
   @@unique([userId, courseId])
   @@map("user_progress")
+}
+
+// Exam question model
+model ExamQuestion {
+  id       String           @id @default(cuid())
+  examId   String?
+  content  String           @db.Text // question content
+  imageUrl String?
+  category QuestionCategory
+  points   Int              @default(1)
+
+  // Answers A, B, C
+  answerA String @db.Text
+  answerB String @db.Text
+  answerC String @db.Text
+
+  correctAnswer CorrectAnswer
+
+  explanation String? @db.Text // optional explanation of the correct answer
+
+  // Relations
+  exam Exam? @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@map("exam_questions")
+}
+
+// Enum for question categories
+enum QuestionCategory {
+  TRAFFIC_SIGNS // traffic signs
+  TRAFFIC_RULES // rules of the road
+  FIRST_AID // first aid
+  VEHICLE_TECH // vehicle technical knowledge
+  SAFETY // safety
+  OTHER // other
+}
+
+// Enum for correct answer
+enum CorrectAnswer {
+  A
+  B
+  C
+}
+
+// Exam model
+model Exam {
+  id     String @id @default(cuid())
+  userId String
+
+  // Relacje
+  questions ExamQuestion[] // 20 questions
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  score  Int?
+  passed Boolean?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("exams")
 }
