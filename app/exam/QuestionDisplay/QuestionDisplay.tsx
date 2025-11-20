@@ -4,6 +4,8 @@ import { ExamQuestion } from "@prisma/client";
 import Image from "next/image";
 import { use, useState } from "react";
 import Answers from "./Answers/Answers";
+import EndExamBtn from "./EndExamBtn/EndExamBtn";
+import CountdownTimer from "./CountdownTimer/CountdownTimer";
 
 const QuestionDisplay = ({
   examQuestions,
@@ -12,20 +14,31 @@ const QuestionDisplay = ({
 }) => {
   const questions = use(examQuestions);
 
-  console.log(questions);
+  const questionIds = questions.map((q) => q.id);
+
+  console.log(questionIds);
 
   const [index, setIndex] = useState(0);
+  const [results, setResults] = useState<(boolean | "?")[]>([]);
+
+  const numberOOfQuestion = index + 1;
 
   return (
     <div className="space-y-8">
-      <div>
-        Pytanie {index + 1} z {questions.length}
+      <div className="flex justify-between items-center">
+        {/* Number of question */}
+        Pytanie {numberOOfQuestion} z {questions.length}
+        {/* Countdown timer */}
+        <CountdownTimer
+          initialMinutes={45}
+          onComplete={() => console.log("time is up")}
+        />
       </div>
       {/* Slide image */}
       <div>
         <Image
           src={questions[index]?.imageUrl || "/file.svg"}
-          alt={`Question number ${index + 1}`}
+          alt={`Question number ${numberOOfQuestion}`}
           width={300}
           height={200}
           loading="eager"
@@ -44,25 +57,23 @@ const QuestionDisplay = ({
       <Answers
         index={index}
         setIndex={setIndex}
+        results={results}
+        setResults={setResults}
         answerA={questions[index].answerA}
         answerB={questions[index].answerB}
         answerC={questions[index].answerC}
         correctAnswer={questions[index].correctAnswer}
+        questionsLength={questions.length}
       />
+      <div className="flex justify-end">
+        <EndExamBtn
+          results={results}
+          setResults={setResults}
+          questionsLength={questions.length}
+          questionIds={questionIds}
+        />
+      </div>
     </div>
   );
 };
 export default QuestionDisplay;
-
-// const searchParams = useSearchParams();
-// const router = useRouter();
-
-// // set index for toggling questions
-// const index = parseInt(searchParams.get("question") || "1") - 1;
-
-// // If url doesnt have value set it
-// useEffect(() => {
-//   if (!searchParams.get("question")) {
-//     router.push("/exam?question=1");
-//   }
-// }, [searchParams, router]);

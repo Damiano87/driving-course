@@ -9,15 +9,21 @@ type AnswersProps = {
   correctAnswer: string;
   index: number;
   setIndex: Dispatch<React.SetStateAction<number>>;
+  results: (boolean | "?")[];
+  setResults: Dispatch<React.SetStateAction<(boolean | "?")[]>>;
+  questionsLength: number;
 };
 
 const Answers = ({
   index,
   setIndex,
+  results,
+  setResults,
   answerA,
   answerB,
   answerC,
   correctAnswer,
+  questionsLength,
 }: AnswersProps) => {
   const [correct, setCorrect] = useState<string | null>(null);
   const [clickedAnswer, setClickedAnswer] = useState<string | null>(null);
@@ -27,9 +33,32 @@ const Answers = ({
     setCorrect(correctAnswer);
     setClickedAnswer(answer);
 
+    // save each answer
+    const isAnswerCorrect = correctAnswer === answer;
+
+    const newResults = [...results, isAnswerCorrect];
+    setResults(newResults);
+
+    console.log(questionsLength);
+
     // go to next question after 1 second
     setTimeout(() => {
-      if (index + 1 >= 20) return; // limit to 20 questions for exam
+      if (index + 1 >= questionsLength) {
+        // add "?" if some questions are unanswered
+        if (newResults.length < questionsLength) {
+          const diff = questionsLength - results.length;
+
+          const unanswered = [] as "?"[];
+
+          for (let i = 0; i <= diff; i++) {
+            unanswered.push("?");
+          }
+
+          setResults([...newResults, ...unanswered]);
+        }
+
+        return;
+      } // limit to 20 questions for exam
       setIndex(index + 1);
       setCorrect(null);
       setClickedAnswer(null);
@@ -43,6 +72,7 @@ const Answers = ({
     return "bg-primary";
   };
 
+  console.log(results);
   return (
     <div className="space-y-4">
       {/* Answer A */}
@@ -94,14 +124,3 @@ const Answers = ({
   );
 };
 export default Answers;
-
-// const questionNumber = parseInt(searchParams.get("question") || "1") + 1;
-
-// // create new object with url search params
-// const goToNextQuestion = () => {
-//   const params = new URLSearchParams(searchParams.toString());
-//   params.set("question", questionNumber.toString());
-
-//   // update URL
-//   router.push(`?${params.toString()}`);
-// };

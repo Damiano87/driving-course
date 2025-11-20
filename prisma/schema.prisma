@@ -76,7 +76,6 @@ model UserProgress {
 // Exam question model
 model ExamQuestion {
   id       String           @id @default(cuid())
-  examId   String?
   content  String           @db.Text // question content
   imageUrl String?
   category QuestionCategory
@@ -92,7 +91,6 @@ model ExamQuestion {
   explanation String? @db.Text // optional explanation of the correct answer
 
   // Relations
-  exam Exam? @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,18 +118,15 @@ enum CorrectAnswer {
 
 // Exam model
 model Exam {
-  id     String @id @default(cuid())
-  userId String
+  id          String   @id @default(cuid())
+  userId      String
+  questionIds String[] // 20 questions
+  answers     String[] // user's answers
+  score       Int?
+  passed      Boolean?
 
   // Relacje
-  questions ExamQuestion[] // 20 questions
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
-
-  score  Int?
-  passed Boolean?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
