@@ -16,8 +16,6 @@ const QuestionDisplay = ({
 
   const questionIds = questions.map((q) => q.id);
 
-  console.log(questionIds);
-
   const [index, setIndex] = useState(0);
   const [results, setResults] = useState<(boolean | "?")[]>([]);
 

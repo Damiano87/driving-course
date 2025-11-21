@@ -23,16 +23,15 @@ const EndExamBtn = ({
     if (results.length < questionsLength) {
       const diff = questionsLength - results.length;
 
-      const unanswered = [] as "?"[];
+      const unanswered = Array(diff).fill("?") as "?"[];
 
-      for (let i = 0; i < diff; i++) {
-        unanswered.push("?");
-      }
-      setResults([...results, ...unanswered]);
+      console.log("Uansweared: ", unanswered);
+      const finalResults = [...results, ...unanswered];
+      console.log("New results: ", finalResults);
+
+      // save results to db
+      saveExamResults(questionIds, finalResults);
     }
-
-    // save results to db
-    saveExamResults(questionIds, results);
 
     // reset results
     setResults([]);

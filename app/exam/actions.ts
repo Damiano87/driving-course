@@ -2,8 +2,9 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/prisma/prisma";
+import { revalidatePath } from "next/cache";
 
-// Get questions from the database =======================================
+// Get exam questions from the database =======================================
 export const getExamQuestions = async () => {
   try {
     // Get 20 random questions from db
@@ -27,12 +28,13 @@ export const saveExamResults = async (
   questionIds: string[],
   answers: (boolean | "?")[]
 ) => {
+  // Check if user is authenticated
   const session = await auth();
 
-  // Check if user is authenticated
   if (!session || !session.user) {
     return "Unauthorized";
   }
+
   // Get user ID
   const userId = session.user.id as string;
 
@@ -59,6 +61,37 @@ export const saveExamResults = async (
     });
 
     console.log("Exam results saved succesfully...");
+    revalidatePath("/exam/result");
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return error.message;
+    }
+    console.error(error);
+    return error;
+  }
+};
+
+// Get exam results by user ID =======================================
+export const getLastResult = async () => {
+  try {
+    // Check if user is authenticated
+    const session = await auth();
+
+    if (!session || !session.user) {
+      return "Unauthorized";
+    }
+
+    const lastResult = await prisma.exam.findFirst({
+      where: {
+        userId: session.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return lastResult;
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);

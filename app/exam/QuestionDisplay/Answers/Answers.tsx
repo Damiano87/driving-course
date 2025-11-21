@@ -39,8 +39,6 @@ const Answers = ({
     const newResults = [...results, isAnswerCorrect];
     setResults(newResults);
 
-    console.log(questionsLength);
-
     // go to next question after 1 second
     setTimeout(() => {
       if (index + 1 >= questionsLength) {
@@ -50,7 +48,7 @@ const Answers = ({
 
           const unanswered = [] as "?"[];
 
-          for (let i = 0; i <= diff; i++) {
+          for (let i = 0; i < diff; i++) {
             unanswered.push("?");
           }
 
@@ -72,7 +70,6 @@ const Answers = ({
     return "bg-primary";
   };
 
-  console.log(results);
   return (
     <div className="space-y-4">
       {/* Answer A */}
