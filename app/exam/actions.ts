@@ -101,3 +101,23 @@ export const getLastResult = async () => {
     return error;
   }
 };
+
+// Get slide data by question ID =======================================
+export const getExamQuestionByID = async (questionId: string) => {
+  try {
+    const examQuestion = await prisma.examQuestion.findUnique({
+      where: {
+        id: questionId,
+      },
+    });
+
+    return examQuestion;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return error.message;
+    }
+    console.error(error);
+    return error;
+  }
+};

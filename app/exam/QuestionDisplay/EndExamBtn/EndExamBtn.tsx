@@ -25,9 +25,7 @@ const EndExamBtn = ({
 
       const unanswered = Array(diff).fill("?") as "?"[];
 
-      console.log("Uansweared: ", unanswered);
       const finalResults = [...results, ...unanswered];
-      console.log("New results: ", finalResults);
 
       // save results to db
       saveExamResults(questionIds, finalResults);
