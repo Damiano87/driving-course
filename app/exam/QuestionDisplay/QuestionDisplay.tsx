@@ -2,10 +2,12 @@
 
 import { ExamQuestion } from "@prisma/client";
 import Image from "next/image";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Answers from "./Answers/Answers";
 import EndExamBtn from "./EndExamBtn/EndExamBtn";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
+import { useRouter } from "next/navigation";
+import { saveExamResults } from "../actions";
 
 const QuestionDisplay = ({
   examQuestions,
@@ -18,8 +20,31 @@ const QuestionDisplay = ({
 
   const [index, setIndex] = useState(0);
   const [results, setResults] = useState<(boolean | "?")[]>([]);
+  const router = useRouter();
 
   const numberOOfQuestion = index + 1;
+  const isExamEnd = index + 1 > questions.length;
+
+  // When answered all questions, save results and redirect
+  useEffect(() => {
+    if (isExamEnd) {
+      console.log("End of exam:", index + 1);
+
+      // save exam results in db and redirect to results page
+      saveExamResults(questionIds, results).then(() => {
+        router.push("/exam/result");
+      });
+    }
+  }, [isExamEnd, index, questionIds, results, router]);
+
+  // Don't render questions after exam ends
+  if (isExamEnd) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p>Zapisywanie wyników...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -32,7 +57,7 @@ const QuestionDisplay = ({
           onComplete={() => console.log("time is up")}
         />
       </div>
-      {/* Slide image */}
+      {/* Question image */}
       <div>
         <Image
           src={questions[index]?.imageUrl || "/file.svg"}
@@ -47,7 +72,7 @@ const QuestionDisplay = ({
           }}
         />
       </div>
-      {/* Slide text */}
+      {/* Question text */}
       <div className="max-w-2xl text-center">
         <p className="text-foreground">{questions[index].content}</p>
       </div>
@@ -62,6 +87,7 @@ const QuestionDisplay = ({
         answerC={questions[index].answerC}
         correctAnswer={questions[index].correctAnswer}
         questionsLength={questions.length}
+        questionIds={questionIds}
       />
       <div className="flex justify-end">
         <EndExamBtn

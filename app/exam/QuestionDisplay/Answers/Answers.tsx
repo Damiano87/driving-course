@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Dispatch, useState } from "react";
+import { saveExamResults } from "../../actions";
 
 type AnswersProps = {
   answerA: string;
@@ -12,6 +13,7 @@ type AnswersProps = {
   results: (boolean | "?")[];
   setResults: Dispatch<React.SetStateAction<(boolean | "?")[]>>;
   questionsLength: number;
+  questionIds: string[];
 };
 
 const Answers = ({
@@ -24,40 +26,26 @@ const Answers = ({
   answerC,
   correctAnswer,
   questionsLength,
+  questionIds,
 }: AnswersProps) => {
   const [correct, setCorrect] = useState<string | null>(null);
   const [clickedAnswer, setClickedAnswer] = useState<string | null>(null);
 
   // check if answer is correct
   const checkAnswer = (answer: string) => {
-    setCorrect(correctAnswer);
-    setClickedAnswer(answer);
-
     // save each answer
     const isAnswerCorrect = correctAnswer === answer;
 
-    const newResults = [...results, isAnswerCorrect];
-    setResults(newResults);
+    const finalResults = [...results, isAnswerCorrect];
+    setResults(finalResults);
+
+    setCorrect(correctAnswer);
+    setClickedAnswer(answer);
 
     // go to next question after 1 second
     setTimeout(() => {
-      if (index + 1 >= questionsLength) {
-        // add "?" if some questions are unanswered
-        if (newResults.length < questionsLength) {
-          const diff = questionsLength - results.length;
-
-          const unanswered = [] as "?"[];
-
-          for (let i = 0; i < diff; i++) {
-            unanswered.push("?");
-          }
-
-          setResults([...newResults, ...unanswered]);
-        }
-
-        return;
-      } // limit to 20 questions for exam
       setIndex(index + 1);
+      // reset states
       setCorrect(null);
       setClickedAnswer(null);
     }, 1000);

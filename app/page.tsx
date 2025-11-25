@@ -1,10 +1,11 @@
-import { getCourses } from "@/actions";
+// import { getCourses } from "@/actions";
 import SlideDisplay from "./_components/SlideDisplay/SlideDisplay";
 import { getProgress, getSlides } from "./_components/SlideDisplay/actions";
 import { redirect } from "next/navigation";
 import SlideSidebar from "./_components/SlideSidebar/SlideSidebar";
 import { auth } from "@/auth";
 import Navbar from "./_components/Navbar/Navbar";
+import GoToExamBtn from "./_components/GoToExamBtn/GoToExamBtn";
 
 export default async function Home({
   searchParams,
@@ -18,6 +19,7 @@ export default async function Home({
     // redirect to login page
     redirect("/login");
   }
+  const userId = session.user?.id as string;
 
   const params = await searchParams;
   const slides = getSlides("cmhnzo86b0000fxkgagycs8l5");
@@ -28,7 +30,7 @@ export default async function Home({
 
     // get progress
     const numbersOfSlides = (await getProgress(
-      "cmhukpd1z0000fx5g703nasch",
+      userId,
       "cmhnzo86b0000fxkgagycs8l5"
     )) as number[];
 
@@ -43,9 +45,12 @@ export default async function Home({
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen flex">
-        <div className="flex flex-1 justify-center items-center">
-          <SlideDisplay slides={slides} />
+      <div className="flex h-[calc(100vh-70px)]">
+        <div className="flex-1">
+          <GoToExamBtn />
+          <div className="flex flex-1 justify-center items-center">
+            <SlideDisplay slides={slides} />
+          </div>
         </div>
         <SlideSidebar />
       </div>

@@ -102,7 +102,7 @@ export const getLastResult = async () => {
   }
 };
 
-// Get slide data by question ID =======================================
+// Get question data by question ID =======================================
 export const getExamQuestionByID = async (questionId: string) => {
   try {
     const examQuestion = await prisma.examQuestion.findUnique({
