@@ -1,14 +1,14 @@
-import { ExamQuestion } from "@prisma/client";
-import { getExamQuestions } from "./actions";
-import QuestionDisplay from "./QuestionDisplay/QuestionDisplay";
+import { Exam, ExamQuestion } from "@prisma/client";
+import { getExamQuestions, getExamsByUserID } from "./actions";
+import ExamContainer from "./ExamContainer/ExamContainer";
 
 const ExamPage = async () => {
   // get exam questions promise
   const examQuestions = getExamQuestions() as Promise<ExamQuestion[]>;
-
+  const userExams = getExamsByUserID() as Promise<Exam[]>;
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <QuestionDisplay examQuestions={examQuestions} />
+      <ExamContainer examQuestions={examQuestions} userExams={userExams} />
     </div>
   );
 };

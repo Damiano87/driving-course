@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { saveExamResults } from "../../actions";
+import { saveExamResults } from "../../../actions";
 import { useRouter } from "next/navigation";
 
 type EndExamBtnProps = {

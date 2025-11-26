@@ -121,3 +121,32 @@ export const getExamQuestionByID = async (questionId: string) => {
     return error;
   }
 };
+
+// Get exams by user ID =======================================
+export const getExamsByUserID = async () => {
+  try {
+    // Check if user is authenticated
+    const session = await auth();
+    if (!session || !session.user) {
+      return "Unauthorized";
+    }
+
+    // Get exams from the database
+    const exams = await prisma.exam.findMany({
+      where: {
+        userId: session.user.id,
+      },
+    });
+
+    console.log("Fetching user exams...");
+
+    return exams;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return error.message;
+    }
+    console.error(error);
+    return error;
+  }
+};

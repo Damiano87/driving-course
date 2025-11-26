@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Dispatch, useState } from "react";
-import { saveExamResults } from "../../actions";
+import { saveExamResults } from "../../../actions";
 
 type AnswersProps = {
   answerA: string;
@@ -25,8 +25,6 @@ const Answers = ({
   answerB,
   answerC,
   correctAnswer,
-  questionsLength,
-  questionIds,
 }: AnswersProps) => {
   const [correct, setCorrect] = useState<string | null>(null);
   const [clickedAnswer, setClickedAnswer] = useState<string | null>(null);

@@ -7,7 +7,7 @@ import Answers from "./Answers/Answers";
 import EndExamBtn from "./EndExamBtn/EndExamBtn";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import { useRouter } from "next/navigation";
-import { saveExamResults } from "../actions";
+import { saveExamResults } from "../../actions";
 
 const QuestionDisplay = ({
   examQuestions,
